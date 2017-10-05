@@ -42,3 +42,10 @@
         masked: no
         daemon_reload: yes
         state: started
+    - name: Install the package "logstash"
+      apt:
+        name: logstash
+        state: present
+    - copy:
+        src: ./logstash.conf
+        dest: /etc/logstash/conf.d/logstash.conf
