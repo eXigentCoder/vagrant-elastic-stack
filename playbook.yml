@@ -1,0 +1,37 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: Update and upgrade apt packages
+      apt:
+        upgrade: yes
+        update_cache: yes
+        cache_valid_time: 86400 #One day
+    - name: Install the package "default-jdk"
+      apt:
+        name: default-jdk
+        state: present
+    - name: Add an Apt signing key for elasticsearch
+      apt_key:
+        url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+        state: present
+    - name: Install the package "apt-transport-https"
+      apt:
+        name: apt-transport-https
+        state: present
+    - apt_repository:
+        repo: deb https://artifacts.elastic.co/packages/5.x/apt stable main
+        state: present
+    - name: Update and upgrade apt packages
+      apt:
+        upgrade: yes
+        update_cache: yes
+        cache_valid_time: 86400 #One day
+    - name: Install the package "elasticsearch"
+      apt:
+        name: elasticsearch
+        state: present
+    - lineinfile:
+        path: /etc/elasticsearch/elasticsearch.yml
+        regexp: '^#network.host:'
+        line: 'network.host: 0.0.0.0'
