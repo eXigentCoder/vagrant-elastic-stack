@@ -49,3 +49,22 @@
     - copy:
         src: ./logstash.conf
         dest: /etc/logstash/conf.d/logstash.conf
+    - name: Install the package "kibana"
+      apt:
+        name: kibana
+        state: present
+    - lineinfile:
+        path: /etc/kibana/kibana.yml
+        insertafter: '^#server.host:'
+        line: 'server.host: 0.0.0.0'
+    - lineinfile:
+        path: /etc/kibana/kibana.yml
+        insertafter: '^server.host: 0.0.0.0'
+        line: 'xpack.security.enabled: false'
+    - name: enable service kibana.service and ensure it is not masked
+      systemd:
+        name: kibana.service
+        enabled: yes
+        masked: no
+        daemon_reload: yes
+        state: started
